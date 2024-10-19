@@ -60,4 +60,5 @@ jobs:
           environment_name: production-grade-multicontainer-fixed
           existing_bucket_name: elasticbeanstalk-eu-west-3-651706784343
           region: eu-west-3
-          file: application.zip  # Specify the zip file to deploy
+          version_label: ${{ github.sha }}
+          deployment_package: deploy.zip  # Specify the zip file to deploy
