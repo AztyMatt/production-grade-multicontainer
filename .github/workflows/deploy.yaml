@@ -56,5 +56,4 @@ jobs:
       - name: Deploy to Elastic Beanstalk
         run: |
           docker run --rm -v $(pwd):/app -w /app amazon/aws-cli:latest \
-          sh -c "pip install awsebcli && eb init production-grade-multicontainer-fixed --region eu-west-3 && eb deploy production-grade-multicontainer-fixed --debug"
-
+          sh -c "pip install awsebcli && eb init production-grade-multicontainer-fixed --region eu-west-3 --no-prompt && eb deploy production-grade-multicontainer-fixed --debug"
