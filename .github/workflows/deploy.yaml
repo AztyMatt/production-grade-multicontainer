@@ -52,6 +52,10 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: eu-west-3
+          
+      - name: Test AWS CLI
+        run: |
+          aws elasticbeanstalk describe-applications
 
       - name: Deploy to Elastic Beanstalk
         run: |
