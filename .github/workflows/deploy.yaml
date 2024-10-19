@@ -47,8 +47,8 @@ jobs:
         uses: actions/checkout@v2  # Check out the code from the repository
 
       - name: Package Application
-        run: |
-          zip -r application.zip .  # Zip all files and directories in the current directory
+        run: | # Zip all files and directories in the current directory
+          zip -r deploy.zip . 
 
       # Deploy the project on AWS Elastic Beanstalk
       - name: Deploy to Elastic Beanstalk
