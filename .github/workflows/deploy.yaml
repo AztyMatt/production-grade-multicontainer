@@ -39,20 +39,25 @@ jobs:
           docker push azty/multi-server
           docker push azty/multi-worker
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build  # Assure-toi que le job de déploiement s'exécute après le job de build
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+deploy:
+  runs-on: ubuntu-latest
+  needs: build  # Ensure that the deployment job runs after the build job
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v2  # Check out the code from the repository
 
-      # Deploy the project on AWS Elastic Beanstalk
-      - name: Deploy to Elastic Beanstalk
-        uses: einaregilsson/beanstalk-deploy@v18
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-          application_name: production-grade-multicontainer-fixed
-          environment_name: production-grade-multicontainer-fixed
-          existing_bucket_name: elasticbeanstalk-eu-west-3-651706784343
-          region: eu-west-3
+    - name: Package Application
+      run: |
+        zip -r application.zip .  # Zip all files and directories in the current directory
+
+    # Deploy the project on AWS Elastic Beanstalk
+    - name: Deploy to Elastic Beanstalk
+      uses: einaregilsson/beanstalk-deploy@v18
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+        application_name: production-grade-multicontainer-fixed
+        environment_name: production-grade-multicontainer-fixed
+        existing_bucket_name: elasticbeanstalk-eu-west-3-651706784343
+        region: eu-west-3  # AWS region
+        file: application.zip  # Specify the zip file to deploy
