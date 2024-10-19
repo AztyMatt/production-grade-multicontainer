@@ -46,14 +46,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: eu-west-3
-
+      # Deploy the project on AWS Elastic Beanstalk
       - name: Deploy to Elastic Beanstalk
-        run: |
-          docker run --rm -v $(pwd):/app -w /app amazon/aws-cli:latest \
-          sh -c "pip install awsebcli && eb init production-grade-multicontainer-fixed --region eu-west-3 --no-prompt && eb deploy production-grade-multicontainer-fixed --debug"
+        uses: einaregilsson/beanstalk-deploy@v18
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: production-grade-multicontainer-fixed
+          environment_name: production-grade-multicontainer-fixed
+          existing_bucket_name: elasticbeanstalk-eu-west-3-651706784343
+          region: eu-west-3
