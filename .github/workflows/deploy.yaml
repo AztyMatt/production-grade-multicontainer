@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest # Set up a base environment for this job
+
     steps:
       # Clone the git repository in the environment
       - uses: actions/checkout@v2
@@ -39,28 +40,22 @@ jobs:
           docker push azty/multi-server
           docker push azty/multi-worker
 
-  # deploy:
-  #   runs-on: ubuntu-latest # Set up a base environment for this job
-  #   needs: build  # This ensures the deploy job runs after the build job
-  #   steps:
-  #     # Clone the git repository in the environment
-  #     - uses: actions/checkout@v2
+  deploy:
+    runs-on: ubuntu-latest
 
-  #     # Download the deployment package from the previous job
-  #     - name: Download Deployment Package
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: deploy-package
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-  #     # Deploy the project on AWS Elastic Beanstalk
-  #     - name: Deploy to Elastic Beanstalk
-  #       uses: einaregilsson/beanstalk-deploy@v18
-  #       with:
-  #         aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
-  #         aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-  #         application_name: production-stage-react
-  #         environment_name: production-stage-react-env
-  #         existing_bucket_name: elasticbeanstalk-eu-north-1-651706784343
-  #         region: eu-north-1
-  #         version_label: ${{ github.sha }}
-  #         deployment_package: deploy.zip
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+          aws-region: eu-west-3
+
+      - name: Deploy to Elastic Beanstalk
+        run: |
+          pip install awsebcli
+          eb init production-grade-multicontainer-fixed --region eu-west-3
+          eb deploy production-grade-multicontainer-fixed

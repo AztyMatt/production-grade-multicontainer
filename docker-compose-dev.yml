@@ -1,0 +1,56 @@
+services:
+  nginx:
+    restart: always # needs to be always active to route traffic to other services
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    # depends_on:
+    #   - api
+    #   - client
+    ports:
+      - "3050:80"
+
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
+
+  redis:
+    image: redis:latest
+
+  api: # api = server, api is just used to avoid nginx conflict
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    volumes:
+      - /app/node_modules
+      - ./server:/app
+    environment:
+      - REDIS_HOST=redis # name of the service in the docker-compose.yml file
+      - REDIS_PORT=6379 # default port for redis
+      - PG_USER=postgres # default user for postgres
+      - PG_HOST=postgres # name of the service in the docker-compose.yml file
+      - PG_DATABASE=postgres # default database for postgres
+      - PG_PASSWORD=postgres_password # default password for postgres
+      - PG_PORT=5432 # default port for postgres
+
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    volumes: # may cause an error
+      - /home/node/app/node_modules
+      - ./client:/home/node/app
+    environment:
+      - WDS_SOCKET_PORT=0 # fix websocket error by forcing webpack to use the same port as the client (our nginx server) and not the default port (our client)
+
+  worker:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    volumes:
+      - /app/node_modules
+      - ./worker:/app
+    environment:
+      - REDIS_HOST=redis # name of the service in the docker-compose.yml file
+      - REDIS_PORT=6379 # default port for redis
