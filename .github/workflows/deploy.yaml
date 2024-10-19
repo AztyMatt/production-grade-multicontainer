@@ -9,7 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest # Set up a base environment for this job
-
     steps:
       # Clone the git repository in the environment
       - uses: actions/checkout@v2
@@ -42,7 +41,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-
+    needs: build  # This ensures the deploy job runs after the build job
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
