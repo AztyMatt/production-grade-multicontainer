@@ -11,7 +11,7 @@ function App() {
                     <h1 className="App-title">Fib Calculator</h1>
                     {/* Redirection vers les urls indiqués */}
                     <div>
-                        <a href="/#">Learn react</a>
+                        <a href="/#">Learn react !</a>
                     </div>
                     <Link to="/">Home</Link>
                     <Link to="/otherpage">Other Page</Link>
